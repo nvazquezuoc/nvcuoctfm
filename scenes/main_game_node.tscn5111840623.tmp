@@ -1,0 +1,125 @@
+[gd_scene format=3 uid="uid://c24n2krdbfhhw"]
+
+[ext_resource type="Script" uid="uid://p1aghyyhx302" path="res://scripts/main_game_node.gd" id="1_j2b2l"]
+[ext_resource type="Script" uid="uid://cibai3ujy2q4x" path="res://scripts/main_menu.gd" id="2_5pbdr"]
+[ext_resource type="Script" uid="uid://b33cgmx6hk1g5" path="res://scripts/main_game_manager.gd" id="2_c1ekv"]
+[ext_resource type="Script" uid="uid://xtqnsf7tnh2d" path="res://scripts/ui_manager.gd" id="2_gude0"]
+[ext_resource type="Script" uid="uid://dtr6j1fb87ix3" path="res://scripts/score_board.gd" id="3_5pbdr"]
+[ext_resource type="PackedScene" uid="uid://oyskqoy1sdyv" path="res://scenes/maps/test3.scn" id="3_ad8j2"]
+[ext_resource type="Script" uid="uid://bkbny3comhewh" path="res://scripts/input_manager.gd" id="3_k6xds"]
+[ext_resource type="Script" uid="uid://cnqloilxil5qb" path="res://scripts/ingame_ui.gd" id="5_rs7hp"]
+[ext_resource type="PackedScene" uid="uid://c01mboxc8hj61" path="res://scenes/character.tscn" id="8_ad8j2"]
+
+[sub_resource type="Environment" id="Environment_k6xds"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(0.19434914, 0.19434932, 0.19434926, 1)
+adjustment_enabled = true
+
+[node name="MainGameNode" type="Node" unique_id=567286505 node_paths=PackedStringArray("node_ui", "node_game")]
+script = ExtResource("1_j2b2l")
+node_ui = NodePath("UI")
+node_game = NodePath("Game")
+
+[node name="Game" type="Node3D" parent="." unique_id=1397169211 node_paths=PackedStringArray("player_chr", "ui_node")]
+visible = false
+script = ExtResource("2_c1ekv")
+player_chr = NodePath("Character")
+ui_node = NodePath("../UI/ingame_ui")
+level_scenes = Array[PackedScene]([ExtResource("3_ad8j2")])
+
+[node name="Character" parent="Game" unique_id=326181993 node_paths=PackedStringArray("player_cam") instance=ExtResource("8_ad8j2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+input_ray_pickable = false
+is_ai = false
+is_player = true
+player_cam = NodePath("../Camera3D")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Game/Character" unique_id=284474151]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0602001, 0)
+visible = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Game" unique_id=2016211159]
+process_mode = 4
+environment = SubResource("Environment_k6xds")
+
+[node name="Camera3D" type="Camera3D" parent="Game" unique_id=110446128]
+transform = Transform3D(1, 0, 0, 0, 0.9835746, 0.18050197, 0, -0.18050197, 0.9835746, 14, 1.0072272, 14.719448)
+projection = 1
+fov = 95.55864
+size = 2.0146952
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Game/Camera3D" unique_id=1742426874]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.19407344, 2.5634947)
+light_energy = 5.5
+spot_angle = 14.900493
+
+[node name="Input" type="Node" parent="." unique_id=479213212]
+script = ExtResource("3_k6xds")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1610689059 node_paths=PackedStringArray("first_menu")]
+script = ExtResource("2_gude0")
+first_menu = NodePath("main_menu")
+
+[node name="main_menu" type="VBoxContainer" parent="UI" unique_id=839335149]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_5pbdr")
+
+[node name="btn_new_game" type="Button" parent="UI/main_menu" unique_id=1117199615]
+layout_mode = 2
+size_flags_vertical = 3
+text = "New Game"
+
+[node name="btn_scoreboard" type="Button" parent="UI/main_menu" unique_id=1979554181]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Scoreboard"
+
+[node name="btn_quit" type="Button" parent="UI/main_menu" unique_id=1595437617]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Quit"
+
+[node name="score_board" type="VBoxContainer" parent="UI" unique_id=1316050427]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_5pbdr")
+
+[node name="scroll" type="ScrollContainer" parent="UI/score_board" unique_id=1844550957]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="board" type="VBoxContainer" parent="UI/score_board/scroll" unique_id=1648476914]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="btn_back" type="Button" parent="UI/score_board" unique_id=1750744662]
+layout_mode = 2
+text = "Back"
+
+[node name="ingame_ui" type="VBoxContainer" parent="UI" unique_id=1642908465]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_rs7hp")
+
+[node name="SpinBox" type="SpinBox" parent="UI/ingame_ui" unique_id=910504472]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="btn_end" type="Button" parent="UI/ingame_ui" unique_id=1291093240]
+visible = false
+layout_mode = 2
+text = "Complete"

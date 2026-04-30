@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://b0omiqdgvr0uu"]
+
+[ext_resource type="PackedScene" uid="uid://dstboikqathkd" path="res://resources/models/tfm_test_scenario.glb" id="1_54bai"]
+[ext_resource type="Material" uid="uid://by0w2f105mc7b" path="res://resources/materials/test_room.tres" id="2_sfxjj"]
+
+[node name="tfm_test_scenario" unique_id=1290637895 instance=ExtResource("1_54bai")]
+
+[node name="Ground" parent="." index="0" unique_id=1463372796]
+material_override = ExtResource("2_sfxjj")
+
+[node name="Wall" parent="." index="1" unique_id=791217254]
+material_override = ExtResource("2_sfxjj")
+
+[node name="Ceiling" parent="." index="2" unique_id=2069112557]
+material_override = ExtResource("2_sfxjj")

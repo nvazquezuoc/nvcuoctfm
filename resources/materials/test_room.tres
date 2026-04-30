@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://by0w2f105mc7b"]
+
+[ext_resource type="Texture2D" uid="uid://ce57pgm5x3k5u" path="res://resources/models/tfm_test_scenario_tfm_test_sceneario_texture.png" id="1_3ubon"]
+
+[resource]
+albedo_texture = ExtResource("1_3ubon")
+texture_filter = 0

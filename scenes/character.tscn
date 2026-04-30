@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://c01mboxc8hj61"]
+
+[ext_resource type="Script" uid="uid://btr01worbgshi" path="res://scripts/character_control_and_ai.gd" id="1_lrhn5"]
+[ext_resource type="PackedScene" uid="uid://d3njyijxnrn6x" path="res://resources/models/ztestAnimatedModel.res" id="2_my7n2"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nd8w8"]
+height = 1.8051758
+
+[node name="Character" type="CharacterBody3D" unique_id=326181993]
+script = ExtResource("1_lrhn5")
+is_ai = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=686238657]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9025879, 0)
+shape = SubResource("CapsuleShape3D_nd8w8")
+
+[node name="exported-model2" parent="." unique_id=720630588 instance=ExtResource("2_my7n2")]
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="." unique_id=1403446548]
+transform = Transform3D(1, 0, 0, 0, 0.99127316, 0.13182388, 0, -0.13182388, 0.99127316, 0, 1, 0.718)
+
+[node name="MarkerS" type="Marker3D" parent="." unique_id=730906448]
+transform = Transform3D(1, 0, 0, 0, 0.9912155, 0.13225639, 0, -0.13225639, 0.9912155, 0, 1, 0.718)
+
+[node name="MarkerE" type="Marker3D" parent="." unique_id=1937324115]
+transform = Transform3D(-4.371139e-08, 0.13225639, -0.9912155, 0, 0.9912155, 0.13225639, 1, 5.7811103e-09, -4.3327407e-08, -0.71799994, 1, 0)
+
+[node name="MarkerN" type="Marker3D" parent="." unique_id=704580272]
+transform = Transform3D(-1, -1.15622205e-08, 8.6654815e-08, 0, 0.9912155, 0.13225639, -8.742278e-08, 0.13225639, -0.9912155, 0, 1, -0.718)
+
+[node name="MarkerW" type="Marker3D" parent="." unique_id=30455828]
+transform = Transform3D(-4.371139e-08, -0.13225639, 0.9912155, 0, 0.9912155, 0.13225639, -1, 5.7811103e-09, -4.3327407e-08, 0.71, 1, 0)
+
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=334228149]
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=413626094]
+target_desired_distance = 0.1

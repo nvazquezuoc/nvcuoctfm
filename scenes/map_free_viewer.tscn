@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://j0w467aprdal"]
+
+[ext_resource type="Script" uid="uid://dg10bgq2agjb0" path="res://scripts/zTestFree3DCam.gd" id="2_8cq1o"]
+[ext_resource type="PackedScene" uid="uid://cnq2snr0ix82g" path="res://scenes/maps/test4.scn" id="3_ae1xh"]
+[ext_resource type="Script" uid="uid://bkbny3comhewh" path="res://scripts/input_manager.gd" id="3_ccf8w"]
+
+[node name="MapFreeViewer" type="Node3D" unique_id=1279280390]
+
+[node name="camp" type="Node3D" parent="." unique_id=933991044]
+script = ExtResource("2_8cq1o")
+
+[node name="Camera3D" type="Camera3D" parent="camp" unique_id=20134256]
+
+[node name="Node" type="Node" parent="." unique_id=1009489562 node_paths=PackedStringArray("target")]
+script = ExtResource("3_ccf8w")
+target = NodePath("../camp")
+
+[node name="map_base" parent="." unique_id=828860256 instance=ExtResource("3_ae1xh")]

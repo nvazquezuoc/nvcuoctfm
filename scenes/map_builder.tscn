@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://bbwu5mn8cynvn"]
+
+[ext_resource type="Script" uid="uid://dc16aoecwf87r" path="res://scripts/map_builder.gd" id="1_r7k7a"]
+[ext_resource type="Texture2D" uid="uid://db7xkue3lydmj" path="res://resources/textures/test4.png" id="2_r7k7a"]
+[ext_resource type="PackedScene" uid="uid://bt0cpjusjtfsf" path="res://scenes/map_base.tscn" id="3_nowpq"]
+[ext_resource type="PackedScene" uid="uid://b0omiqdgvr0uu" path="res://scenes/MapRes.tscn" id="4_r7k7a"]
+
+[node name="MapBuilder" type="Node3D" unique_id=375947006 node_paths=PackedStringArray("map_node", "meshes_map")]
+script = ExtResource("1_r7k7a")
+texture_map = ExtResource("2_r7k7a")
+map_node = NodePath("map_base")
+map_name = "test4"
+save_dir = "res://scenes/maps"
+meshes_map = NodePath("meshes")
+
+[node name="map_base" parent="." unique_id=828860256 instance=ExtResource("3_nowpq")]
+texture_map = ExtResource("2_r7k7a")
+player_spawn = Vector3(6, 0, 8)
+
+[node name="meshes" parent="." unique_id=1290637895 instance=ExtResource("4_r7k7a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037814617, 0, 0.080584526)
