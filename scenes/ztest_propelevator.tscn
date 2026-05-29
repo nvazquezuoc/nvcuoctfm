@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://clyxy52nmlvvf"]
+
+[ext_resource type="Script" uid="uid://dq3ugwk2v5cnu" path="res://scripts/elevator_test.gd" id="1_ad57f"]
+[ext_resource type="PackedScene" uid="uid://boan02pjbg3t" path="res://scenes/prop_elevator.tscn" id="2_jmcak"]
+[ext_resource type="Script" uid="uid://bkbny3comhewh" path="res://scripts/input_manager.gd" id="3_eultk"]
+
+[node name="elevator test" type="Node3D" unique_id=539124932]
+script = ExtResource("1_ad57f")
+
+[node name="elevator" parent="." unique_id=1660700550 instance=ExtResource("2_jmcak")]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1818197853]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0029671, 0.70229685)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Camera3D" unique_id=1948069636]
+
+[node name="Input" type="Node" parent="." unique_id=1704599566 node_paths=PackedStringArray("target")]
+script = ExtResource("3_eultk")
+target = NodePath("..")

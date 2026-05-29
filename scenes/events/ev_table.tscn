@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://bwcehl3dwfxkx"]
+
+[ext_resource type="Script" uid="uid://bhv1gd27ufeat" path="res://scripts/events/ev_table.gd" id="1_veoca"]
+[ext_resource type="Script" uid="uid://d3h7ck7dwq2xx" path="res://scripts/controlables/controlable_simple_change.gd" id="2_4d4xr"]
+[ext_resource type="Texture2D" uid="uid://yeyestcpewrw" path="res://resources/textures/icons/iconEye.png" id="2_ik3b7"]
+[ext_resource type="PackedScene" uid="uid://beu5qpmrrgs6h" path="res://resources/models/ztestAnimatedHiding.tscn" id="3_1e7pc"]
+[ext_resource type="PackedScene" uid="uid://dcudqiwfjctgg" path="res://resources/models/table.glb" id="4_0ia35"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_l30y8"]
+size = Vector3(1, 0.7, 0.5)
+
+[node name="EvTable" type="Node3D" unique_id=763527475 node_paths=PackedStringArray("points_of_interest")]
+script = ExtResource("1_veoca")
+interaction_icon = ExtResource("2_ik3b7")
+points_of_interest = [NodePath("tabletop")]
+
+[node name="Node" type="Node" parent="." unique_id=1520675443]
+script = ExtResource("2_4d4xr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1118118792]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -0.75)
+visible = false
+mesh = SubResource("BoxMesh_l30y8")
+
+[node name="tabletop" type="Marker3D" parent="." unique_id=879657157]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1312623, -0.7334094)
+
+[node name="tablebot" type="Marker3D" parent="." unique_id=1320075708]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75)
+
+[node name="farsant" parent="." unique_id=2052435548 instance=ExtResource("3_1e7pc")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="MarkerS" type="Marker3D" parent="." unique_id=1179434934]
+transform = Transform3D(1, 0, 0, 0, 0.45182756, 0.8921052, 0, -0.8921052, 0.45182756, 0, 2.1237156, -0.010541469)
+
+[node name="remote" type="RemoteTransform3D" parent="." unique_id=1635986533]
+transform = Transform3D(1, 0, 0, 0, 0.9912155, 0.13225639, 0, -0.13225639, 0.9912155, 0, 0.7878523, -0.33015108)
+
+[node name="MarkerS2" type="Marker3D" parent="." unique_id=902168307]
+transform = Transform3D(1, 0, 0, 0, 0.9912155, 0.13225639, 0, -0.13225639, 0.9912155, 0, 1.2701793, -0.09118074)
+
+[node name="table" parent="." unique_id=2131201802 instance=ExtResource("4_0ia35")]

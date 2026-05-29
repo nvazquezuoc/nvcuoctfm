@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bbqwcoebbr4qs"]
+
+[ext_resource type="Script" uid="uid://bbafsptsipya5" path="res://scripts/ztest_chat.gd" id="1_aaq6q"]
+
+[node name="PanelContainer" type="PanelContainer" unique_id=1875921509 node_paths=PackedStringArray("label")]
+visible = false
+script = ExtResource("1_aaq6q")
+label = NodePath("Label")
+
+[node name="Label" type="Label" parent="." unique_id=748770778]
+layout_mode = 2
+autowrap_mode = 2

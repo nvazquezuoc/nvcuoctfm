@@ -2,11 +2,9 @@
 
 [ext_resource type="Script" uid="uid://ctsn4h0yespq7" path="res://scripts/map_base.gd" id="1_v6wkn"]
 [ext_resource type="Material" uid="uid://by0w2f105mc7b" path="res://resources/materials/test_room.tres" id="2_prq8r"]
-[ext_resource type="PackedScene" uid="uid://x4g6khunfr5n" path="res://scenes/interactable_element.tscn" id="2_yg4uq"]
 
 [node name="ZTestFragmentedMap" type="Node3D" unique_id=828860256]
 script = ExtResource("1_v6wkn")
-interaction_pckscn = ExtResource("2_yg4uq")
 
 [node name="Events" type="Node3D" parent="." unique_id=2097858974]
 

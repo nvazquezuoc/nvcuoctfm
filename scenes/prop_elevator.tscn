@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://boan02pjbg3t"]
+
+[ext_resource type="PackedScene" uid="uid://bpipo6c00w0oj" path="res://resources/models/elevator.glb" id="1_mu33k"]
+[ext_resource type="Script" uid="uid://cljxi65dbyfh1" path="res://scripts/prop_elevator.gd" id="2_cla6n"]
+
+[node name="elevator" unique_id=1660700550 instance=ExtResource("1_mu33k")]
+script = ExtResource("2_cla6n")
+
+[node name="Label3D" type="Label3D" parent="." index="6" unique_id=116373117]
+transform = Transform3D(0.3754965, 0, 0, 0, 0.34281495, 0, 0, 0, 1, 0.7522261, 1.113417, -0.66026723)
+text = "100"

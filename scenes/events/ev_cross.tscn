@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://ccwwdh1xmw4pi"]
+
+[ext_resource type="Script" uid="uid://cv52ynlm1yrag" path="res://scripts/events/ev_cornercross.gd" id="1_c7ymj"]
+[ext_resource type="Texture2D" uid="uid://clscdsvpud2qk" path="res://resources/textures/icons/iconShoe.png" id="2_huo87"]
+
+[node name="EvCross" type="Node3D" unique_id=1645135257]
+script = ExtResource("1_c7ymj")
+interaction_icon = ExtResource("2_huo87")
+
+[node name="SpotN" type="Marker3D" parent="." unique_id=2131965719]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.2)
+
+[node name="SpotS" type="Marker3D" parent="." unique_id=102920359]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.2)
+
+[node name="SpotE" type="Marker3D" parent="." unique_id=887020316]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 0)
+
+[node name="SpotW" type="Marker3D" parent="." unique_id=1422890580]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 0)

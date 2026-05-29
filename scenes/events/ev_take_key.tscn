@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://ckx8vca0t0eax"]
+
+[ext_resource type="Script" uid="uid://d24ph63lmg4mr" path="res://scripts/events/ev_take_key.gd" id="1_v2fql"]
+[ext_resource type="Texture2D" uid="uid://s4xjlvj36xys" path="res://resources/textures/icons/iconLock.png" id="2_ql7u5"]
+[ext_resource type="PackedScene" uid="uid://5b5b0siyk1nf" path="res://resources/models/key.tscn" id="3_ql7u5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_v2fql"]
+size = Vector3(0.5, 0.1, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_v2fql"]
+size = Vector3(0.33953857, 0.05239868, 0.16088867)
+
+[node name="EvTakeKey" type="Node3D" unique_id=1097101910]
+script = ExtResource("1_v2fql")
+is_touchable = true
+interaction_icon = ExtResource("2_ql7u5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1685268713]
+visible = false
+mesh = SubResource("BoxMesh_v2fql")
+
+[node name="body" type="StaticBody3D" parent="." unique_id=1223030627]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="body" unique_id=698989626]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.030059814, 0.0050201416, -0.014526367)
+shape = SubResource("BoxShape3D_v2fql")
+
+[node name="key2" parent="." unique_id=1848833012 instance=ExtResource("3_ql7u5")]
+transform = Transform3D(0.41083235, 0, 0, 0, 1, 0, 0, 0, 0.41083235, 0, 0, 0)

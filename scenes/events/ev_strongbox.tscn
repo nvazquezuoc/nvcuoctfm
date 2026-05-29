@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://bh5mqq7gb2cn5"]
+
+[ext_resource type="Script" uid="uid://ca07hvemc738m" path="res://scripts/events/ev_strongbox.gd" id="1_42haq"]
+[ext_resource type="Texture2D" uid="uid://yeyestcpewrw" path="res://resources/textures/icons/iconEye.png" id="2_623jh"]
+[ext_resource type="Script" uid="uid://d3h7ck7dwq2xx" path="res://scripts/controlables/controlable_simple_change.gd" id="2_ou6m5"]
+[ext_resource type="PackedScene" uid="uid://beu5qpmrrgs6h" path="res://resources/models/ztestAnimatedHiding.tscn" id="3_623jh"]
+[ext_resource type="PackedScene" uid="uid://dtilwf0033on" path="res://resources/models/strongbox.glb" id="4_ou6m5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_y0kou"]
+size = Vector3(1, 0.7, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6fgsr"]
+size = Vector3(0.465, 0.5, 0.02)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ou6m5"]
+size = Vector3(0.5428467, 0.51794434, 0.039123535)
+
+[node name="ev_strongbox" type="Node3D" unique_id=442867979 node_paths=PackedStringArray("points_of_interest")]
+script = ExtResource("1_42haq")
+interaction_icon = ExtResource("2_623jh")
+points_of_interest = [NodePath("item spot"), NodePath("door/lock_pos")]
+
+[node name="Node" type="Node" parent="." unique_id=2018343208]
+script = ExtResource("2_ou6m5")
+
+[node name="table" type="MeshInstance3D" parent="." unique_id=1040699]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -0.75)
+visible = false
+mesh = SubResource("BoxMesh_y0kou")
+
+[node name="door" type="Node3D" parent="." unique_id=1456094230]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22702655, 1.3757536, -0.4798516)
+
+[node name="table" type="MeshInstance3D" parent="door" unique_id=96182291]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22957079, 0, 0)
+mesh = SubResource("BoxMesh_6fgsr")
+
+[node name="lock_pos" type="Marker3D" parent="door" unique_id=1212545629]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21151882, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="door" unique_id=736658431]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="door/StaticBody3D" unique_id=462375189]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22857666, 0.0060424805, -0.0057678223)
+shape = SubResource("BoxShape3D_ou6m5")
+
+[node name="tabletop" type="Marker3D" parent="." unique_id=427857411]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2414306, -0.6837644)
+
+[node name="item spot" type="Marker3D" parent="." unique_id=1059685695]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2414306, -0.6837644)
+
+[node name="farsant" parent="." unique_id=2052435548 instance=ExtResource("3_623jh")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.42175364, 0.049645007)
+visible = false
+
+[node name="MarkerS" type="Marker3D" parent="." unique_id=1202269994]
+transform = Transform3D(1, 0, 0, 0, 0.45182756, 0.8921052, 0, -0.8921052, 0.45182756, 0, 2.3158946, 0.039103538)
+
+[node name="remote" type="RemoteTransform3D" parent="." unique_id=1802526467]
+transform = Transform3D(1, 0, 0, 0, 0.9912155, 0.13225639, 0, -0.13225639, 0.9912155, 0, 1.3717132, -0.28050607)
+
+[node name="MarkerS2" type="Marker3D" parent="." unique_id=1236474884]
+transform = Transform3D(1, 0, 0, 0, 0.9912155, 0.13225639, 0, -0.13225639, 0.9912155, 0, 1.4623581, -0.041535735)
+
+[node name="strongbox" parent="." unique_id=443787821 instance=ExtResource("4_ou6m5")]

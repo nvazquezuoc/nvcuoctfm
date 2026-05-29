@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bjraounjkn7sk"]
+
+[ext_resource type="Script" uid="uid://3k6y4pvtkvt0" path="res://scripts/ztest_chat_manager.gd" id="1_r6t42"]
+[ext_resource type="PackedScene" uid="uid://bbqwcoebbr4qs" path="res://scenes/ztest_chat_messagebox.tscn" id="2_s4tuq"]
+
+[node name="Control" type="Control" unique_id=349967166 node_paths=PackedStringArray("label", "message_base")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r6t42")
+dialogue = Array[String](["Hello madafacas", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software including versions of Lorem Ipsum.", "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.", "t is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like"])
+label = NodePath("")
+message_base = NodePath("")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1038599686]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 419.0
+offset_top = 60.0
+offset_right = -400.0
+offset_bottom = -107.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" parent="VBoxContainer" unique_id=1875921509 instance=ExtResource("2_s4tuq")]
+layout_mode = 2

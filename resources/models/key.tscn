@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://5b5b0siyk1nf"]
+
+[ext_resource type="PackedScene" uid="uid://dd3kj28sohvn6" path="res://resources/models/key.glb" id="1_pcfbh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dvyiy"]
+albedo_color = Color(1, 1, 0.19215687, 1)
+
+[node name="key" unique_id=1848833012 instance=ExtResource("1_pcfbh")]
+
+[node name="Cube" parent="." index="0" unique_id=87570413]
+surface_material_override/0 = SubResource("StandardMaterial3D_dvyiy")

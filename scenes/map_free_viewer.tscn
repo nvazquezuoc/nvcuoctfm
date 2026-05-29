@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://j0w467aprdal"]
 
 [ext_resource type="Script" uid="uid://dg10bgq2agjb0" path="res://scripts/zTestFree3DCam.gd" id="2_8cq1o"]
-[ext_resource type="PackedScene" uid="uid://cnq2snr0ix82g" path="res://scenes/maps/test4.scn" id="3_ae1xh"]
+[ext_resource type="PackedScene" uid="uid://6k6ktpeuk6lr" path="res://scenes/maps/test66.scn" id="3_ae1xh"]
 [ext_resource type="Script" uid="uid://bkbny3comhewh" path="res://scripts/input_manager.gd" id="3_ccf8w"]
 
 [node name="MapFreeViewer" type="Node3D" unique_id=1279280390]
@@ -16,3 +16,5 @@ script = ExtResource("3_ccf8w")
 target = NodePath("../camp")
 
 [node name="map_base" parent="." unique_id=828860256 instance=ExtResource("3_ae1xh")]
+dict_locknkey = null
+auxiliar_interactions = null

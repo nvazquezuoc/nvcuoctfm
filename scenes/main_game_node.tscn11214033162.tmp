@@ -25,19 +25,14 @@
 [ext_resource type="PackedScene" uid="uid://ckx8vca0t0eax" path="res://scenes/events/ev_take_key.tscn" id="14_qa4ao"]
 [ext_resource type="PackedScene" uid="uid://bwcehl3dwfxkx" path="res://scenes/events/ev_table.tscn" id="15_uytyk"]
 [ext_resource type="PackedScene" uid="uid://c5p85mij1n0ns" path="res://scenes/events/ev_codenum.tscn" id="20_xh0el"]
-[ext_resource type="Texture2D" uid="uid://dtxdftbvu8plq" path="res://resources/textures/test_maps2/testxx.png" id="21_6nlhk"]
 [ext_resource type="PackedScene" uid="uid://dyw1sjjmsxt1d" path="res://scenes/events/ev_take_code.tscn" id="21_577b0"]
 [ext_resource type="PackedScene" uid="uid://bh5mqq7gb2cn5" path="res://scenes/events/ev_strongbox.tscn" id="21_o156m"]
-[ext_resource type="Texture2D" uid="uid://db7xkue3lydmj" path="res://resources/textures/test4.png" id="22_jusnr"]
 [ext_resource type="PackedScene" uid="uid://dkp14l50sou64" path="res://scenes/enemy_base.tscn" id="23_577b0"]
+[ext_resource type="Texture2D" uid="uid://ctkuu78tmhk" path="res://resources/textures/question_icon.png" id="25_5wfih"]
 [ext_resource type="Script" uid="uid://bt0jf5herruv4" path="res://scripts/introduction_scene.gd" id="26_rilay"]
 [ext_resource type="PackedScene" uid="uid://bbqwcoebbr4qs" path="res://scenes/ztest_chat_messagebox.tscn" id="27_6b1bk"]
 [ext_resource type="AudioStream" uid="uid://dlfbfu22lbdh4" path="res://resources/sounds/singletype.mp3" id="28_6b1bk"]
-[ext_resource type="Texture2D" uid="uid://bman0j4b6ceg3" path="res://resources/textures/titletexture.png" id="28_6nlhk"]
-[ext_resource type="Texture2D" uid="uid://cab3udshufou0" path="res://resources/textures/record.png" id="29_7vbvd"]
 [ext_resource type="Script" uid="uid://cyr8rypyqyta4" path="res://scripts/score_end_screen.gd" id="29_577b0"]
-[ext_resource type="Script" uid="uid://7gc7yxo7qx1v" path="res://scripts/victorymsg.gd" id="30_tk0fb"]
-[ext_resource type="AudioStream" uid="uid://cvsy3pj8glxpk" path="res://resources/sounds/thunder.mp3" id="31_jusnr"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8v21h"]
 resource_name = "Material"
@@ -84,10 +79,10 @@ ambient_light_color = Color(0.19434914, 0.19434932, 0.19434926, 1)
 adjustment_enabled = true
 
 [sub_resource type="LabelSettings" id="LabelSettings_577b0"]
-font_size = 12
+font_size = 24
 
 [sub_resource type="LabelSettings" id="LabelSettings_xxsmr"]
-font_size = 12
+font_size = 32
 
 [node name="MainGameNode" type="Node" unique_id=567286505 node_paths=PackedStringArray("node_ui", "node_game", "simpleAudioPlayer")]
 auto_translate_mode = 2
@@ -110,6 +105,7 @@ map_mesh = NodePath("map_meshes")
 generators = [NodePath("level_generators/generator_1")]
 active_builder = NodePath("level_generators/generator_1")
 first_builder = NodePath("level_generators/generator_1")
+max_levels = 1
 
 [node name="fail_scene" type="Node3D" parent="Game" unique_id=191199588 node_paths=PackedStringArray("remote", "spinner")]
 script = ExtResource("9_mhs35")
@@ -137,38 +133,6 @@ visible = false
 
 [node name="generator_1" type="Node" parent="Game/level_generators" unique_id=676578416 node_paths=PackedStringArray("map_meshes", "next_A", "next_B")]
 script = ExtResource("12_5ua30")
-map_textures = Array[Texture]([ExtResource("6_qmv7e"), ExtResource("5_2juyw")])
-dict_locknkey = Dictionary[StringName, Array]({
-&"lock": [ExtResource("13_yj0mg"), ExtResource("14_qa4ao")],
-&"number": [ExtResource("20_xh0el"), ExtResource("21_577b0")]
-})
-auxiliar_interactions = Array[PackedScene]([ExtResource("15_uytyk"), ExtResource("21_o156m")])
-map_meshes = NodePath("../../map_meshes")
-newmap_pck = ExtResource("4_xxsmr")
-next_A = NodePath("../generator_2")
-condition_A = 2
-next_B = NodePath(".")
-condition_B = -3
-
-[node name="generator_2" type="Node" parent="Game/level_generators" unique_id=874799442 node_paths=PackedStringArray("map_meshes", "next_A", "next_B")]
-script = ExtResource("12_5ua30")
-map_textures = Array[Texture]([ExtResource("8_5ua30"), ExtResource("21_6nlhk"), ExtResource("22_jusnr")])
-dict_locknkey = Dictionary[StringName, Array]({
-&"lock": [ExtResource("13_yj0mg"), ExtResource("14_qa4ao")],
-&"number": [ExtResource("20_xh0el"), ExtResource("21_577b0")]
-})
-auxiliar_interactions = Array[PackedScene]([ExtResource("15_uytyk"), ExtResource("21_o156m")])
-map_meshes = NodePath("../../map_meshes")
-newmap_pck = ExtResource("4_xxsmr")
-max_obstacles = 2
-min_enemies = 1
-max_enemies = 1
-next_A = NodePath(".")
-condition_A = 2
-next_B = NodePath("../generator_1")
-
-[node name="generator_3" type="Node" parent="Game/level_generators" unique_id=632914006 node_paths=PackedStringArray("map_meshes", "next_A", "next_B")]
-script = ExtResource("12_5ua30")
 map_textures = Array[Texture]([ExtResource("6_qmv7e"), ExtResource("7_4cp45"), ExtResource("8_5ua30"), ExtResource("5_2juyw")])
 dict_locknkey = Dictionary[StringName, Array]({
 &"lock": [ExtResource("13_yj0mg"), ExtResource("14_qa4ao")],
@@ -180,8 +144,27 @@ newmap_pck = ExtResource("4_xxsmr")
 min_obstacles = 1
 max_obstacles = 1
 next_A = NodePath("../generator_2")
-condition_A = 2
+condition_A = 5
 next_B = NodePath(".")
+condition_B = -3
+
+[node name="generator_2" type="Node" parent="Game/level_generators" unique_id=874799442 node_paths=PackedStringArray("map_meshes", "next_A", "next_B")]
+script = ExtResource("12_5ua30")
+map_textures = Array[Texture]([ExtResource("8_5ua30")])
+dict_locknkey = Dictionary[StringName, Array]({
+&"lock": [ExtResource("13_yj0mg"), ExtResource("14_qa4ao")],
+&"number": [ExtResource("20_xh0el"), ExtResource("21_577b0")]
+})
+auxiliar_interactions = Array[PackedScene]([ExtResource("15_uytyk"), ExtResource("21_o156m")])
+map_meshes = NodePath("../../map_meshes")
+newmap_pck = ExtResource("4_xxsmr")
+max_obstacles = 2
+min_enemies = 1
+max_enemies = 1
+next_A = NodePath(".")
+condition_A = 33
+next_B = NodePath("../generator_1")
+condition_B = -5
 
 [node name="Character" parent="Game" unique_id=326181993 instance=ExtResource("8_ad8j2")]
 SPEED = 1.0
@@ -194,13 +177,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7534952, 0, 0)
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=124465749]
 stream = ExtResource("28_6b1bk")
 
-[node name="Input" type="Node" parent="." unique_id=479213212 node_paths=PackedStringArray("phone_btns")]
+[node name="Input" type="Node" parent="." unique_id=479213212]
 script = ExtResource("3_k6xds")
-phone_btns = {
-&"ui_accept": NodePath("../UI/AspectRatioContainer/CenterContainer/VBoxContainer2/phone_controls/Button"),
-&"ui_left": NodePath("../UI/AspectRatioContainer/CenterContainer/VBoxContainer2/phone_controls/HBoxContainer/Button"),
-&"ui_right": NodePath("../UI/AspectRatioContainer/CenterContainer/VBoxContainer2/phone_controls/HBoxContainer/Button2")
-}
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1610689059 node_paths=PackedStringArray("first_menu", "game_ui")]
 script = ExtResource("2_gude0")
@@ -227,9 +205,8 @@ size_flags_vertical = 3
 color = Color(0, 0, 0, 1)
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="UI" unique_id=523682325]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+offset_right = 1212.0
+offset_bottom = 684.0
 grow_horizontal = 2
 grow_vertical = 2
 ratio = 0.56
@@ -246,7 +223,7 @@ layout_mode = 2
 
 [node name="SubViewport" type="SubViewport" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer" unique_id=1105293213]
 handle_input_locally = false
-size = Vector2i(256, 192)
+size = Vector2i(384, 342)
 render_target_update_mode = 4
 
 [node name="Camera3D" type="Camera3D" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport" unique_id=110446128]
@@ -265,43 +242,29 @@ current = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport" unique_id=1625045371]
 
+[node name="victory" type="ColorRect" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport/CanvasLayer" unique_id=550596584]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
 [node name="maintitle" type="TextureRect" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport/CanvasLayer" unique_id=1714327478]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("28_6nlhk")
-expand_mode = 2
-
-[node name="start" type="TextureRect" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport/CanvasLayer" unique_id=836243635]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("29_7vbvd")
-expand_mode = 2
+texture = ExtResource("25_5wfih")
 
-[node name="victory" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport/CanvasLayer" unique_id=595729728 node_paths=PackedStringArray("node")]
+[node name="start" type="ColorRect" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport/CanvasLayer" unique_id=1621721692]
 visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 2
-script = ExtResource("30_tk0fb")
-box = ExtResource("27_6b1bk")
-msg = "And that's how... I escaped."
-node = NodePath("PanelContainer")
-sound = ExtResource("28_6b1bk")
-
-[node name="PanelContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer/SubViewport/CanvasLayer/victory" unique_id=1875921509 node_paths=PackedStringArray("audio_stream_player") instance=ExtResource("27_6b1bk")]
-visible = true
-layout_mode = 2
-audio_stream_player = NodePath("../../../../../../../../../AudioStreamPlayer")
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.36078432, 1, 1, 1)
 
 [node name="SubViewportContainer2" type="SubViewportContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2" unique_id=2111617691]
 layout_mode = 2
@@ -309,7 +272,7 @@ layout_mode = 2
 [node name="SubViewport" type="SubViewport" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2" unique_id=2000100520]
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(256, 192)
+size = Vector2i(384, 342)
 render_target_update_mode = 4
 
 [node name="Camera3D" type="Camera3D" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport" unique_id=1192060970]
@@ -340,7 +303,6 @@ color = Color(0, 0, 0, 1)
 [node name="CanvasLayer" type="CanvasLayer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport" unique_id=1202639505]
 
 [node name="introduction" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer" unique_id=1849985408 node_paths=PackedStringArray("dvbox", "audio_player")]
-visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -349,45 +311,28 @@ grow_vertical = 2
 script = ExtResource("26_rilay")
 base_box = ExtResource("27_6b1bk")
 dialogues = Array[String](["Hello", "If you're fortunate enough to find this phone, it means you've had as much bad luck as I have, and you've ended up in this hotel with a murderous maniac.", "Just like me, you came in because you needed a place to spend the night, and the moment you walked in, you were lost.", "The elevators are locked; good luck opening them, they only move one floor.", "And finally, let me welcome you to..."])
-dvbox = NodePath("Control/VBoxContainer")
+dvbox = NodePath("ScrollContainer/VBoxContainer")
 audio_player = NodePath("../../../../../../../../AudioStreamPlayer")
-thundersound = ExtResource("31_jusnr")
 
-[node name="Control" type="Control" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction" unique_id=1498320996]
-custom_minimum_size = Vector2(0, 153)
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction" unique_id=337045379]
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction/Control" unique_id=1352104653]
-clip_contents = true
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -153.0
-grow_horizontal = 2
-grow_vertical = 0
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction/ScrollContainer" unique_id=1352104653]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 2
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction" unique_id=1910278488]
-visible = false
-clip_contents = true
-custom_minimum_size = Vector2(0, 153)
-layout_mode = 2
-alignment = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction" unique_id=337045379]
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
 
 [node name="Button" type="Button" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction" unique_id=786770176]
 layout_mode = 2
 text = "Next"
 
+[node name="Control" type="Control" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/introduction" unique_id=1498320996]
+layout_mode = 2
+
 [node name="main_menu" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer" unique_id=839335149]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -404,11 +349,6 @@ text = "New Game"
 layout_mode = 2
 size_flags_vertical = 3
 text = "Scoreboard"
-
-[node name="btn_other" type="Button" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/main_menu" unique_id=197322832]
-visible = false
-layout_mode = 2
-text = "Other"
 
 [node name="btn_quit" type="Button" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/main_menu" unique_id=1595437617]
 layout_mode = 2
@@ -504,7 +444,7 @@ theme_override_constants/separation = 0
 layout_mode = 2
 
 [node name="intearaction_icon" type="TextureRect" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/ingame_ui/HBoxContainer" unique_id=1435840536]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 expand_mode = 5
 
@@ -525,7 +465,7 @@ label_settings = SubResource("LabelSettings_xxsmr")
 
 [node name="TextureRect" type="TextureRect" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/ingame_ui/HBoxContainer" unique_id=704171521]
 visible = false
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 texture = ExtResource("10_k25sd")
 expand_mode = 5
@@ -584,14 +524,6 @@ size_flags_vertical = 3
 [node name="btn_back" type="Button" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer/end_screen" unique_id=1447421199]
 layout_mode = 2
 text = "Back"
-
-[node name="other" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2/SubViewportContainer2/SubViewport/CanvasLayer" unique_id=1353427537]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="phone_controls" type="VBoxContainer" parent="UI/AspectRatioContainer/CenterContainer/VBoxContainer2" unique_id=994896693]
 visible = false

@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://dyw1sjjmsxt1d"]
+
+[ext_resource type="Script" uid="uid://enf1nmfrho0g" path="res://scripts/events/ev_take_code.gd" id="1_fqx48"]
+[ext_resource type="Texture2D" uid="uid://yeyestcpewrw" path="res://resources/textures/icons/iconEye.png" id="2_1s8b3"]
+[ext_resource type="PackedScene" uid="uid://d1vcxuok0gfe4" path="res://resources/models/codepaper.glb" id="3_1s8b3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_v2fql"]
+size = Vector3(0.5, 0.1, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_v2fql"]
+size = Vector3(0.34851074, 0.079437256, 0.36450195)
+
+[node name="EvTakeKey" type="Node3D" unique_id=1097101910]
+script = ExtResource("1_fqx48")
+is_touchable = true
+interaction_icon = ExtResource("2_1s8b3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1685268713]
+visible = false
+mesh = SubResource("BoxMesh_v2fql")
+
+[node name="body" type="StaticBody3D" parent="." unique_id=1223030627]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="body" unique_id=698989626]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0005493164, 0.041030884, 0.0013427734)
+shape = SubResource("BoxShape3D_v2fql")
+
+[node name="codepaper" parent="." unique_id=1472135957 instance=ExtResource("3_1s8b3")]

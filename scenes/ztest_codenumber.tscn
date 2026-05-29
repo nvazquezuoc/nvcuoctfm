@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://cbw7fi3rai7iu"]
 
 [ext_resource type="Script" uid="uid://do6blom4iik2u" path="res://scripts/codeboard.gd" id="1_8jo2d"]
+[ext_resource type="Script" uid="uid://qjmby6wk5hd3" path="res://scripts/ztest_codenumber.gd" id="1_8tq5e"]
+[ext_resource type="PackedScene" uid="uid://c5p85mij1n0ns" path="res://scenes/events/ev_codenum.tscn" id="3_blp7f"]
 
 [sub_resource type="Environment" id="Environment_rk8ee"]
 background_mode = 1
@@ -23,7 +25,7 @@ size = Vector3(0.05381775, 0.05407715, 0.057159424)
 size = Vector3(0.17, 0.05, 0.02)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8jo2d"]
-size = Vector3(0.17248535, 0.054626465, 1)
+size = Vector3(0.17248535, 0.054626465, 0.062438965)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gbrqu"]
 albedo_color = Color(1, 0.8862745, 0.52156866, 1)
@@ -35,9 +37,10 @@ size = Vector3(0.05, 0.16, 0.02)
 albedo_color = Color(0.41568628, 1, 0.69411767, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8tq5e"]
-size = Vector3(0.054031372, 0.16461182, 1)
+size = Vector3(0.054031372, 0.16461182, 0.0713501)
 
 [node name="ZtestCodenumber" type="Node3D" unique_id=1223296595]
+script = ExtResource("1_8tq5e")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=516459718]
 environment = SubResource("Environment_rk8ee")
@@ -47,6 +50,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.006443955, 0.99539)
 projection = 1
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=716189556]
+visible = false
 mesh = SubResource("BoxMesh_8jo2d")
 script = ExtResource("1_8jo2d")
 
@@ -164,7 +168,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_rk8ee")
 [node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D/key0" unique_id=1420325975]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/key0/StaticBody3D" unique_id=1172230028]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016022101, -3.052503e-05, -0.015304569)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016022101, -3.052503e-05, -0.01734924)
 shape = SubResource("BoxShape3D_8jo2d")
 
 [node name="keyBack" type="MeshInstance3D" parent="MeshInstance3D" unique_id=2136444098]
@@ -186,9 +190,11 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ykaae")
 [node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D/keyEnter" unique_id=1870838277]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/keyEnter/StaticBody3D" unique_id=62162538]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00033569336, -0.0007629432, -0.015304569)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00033569336, -0.0007629432, -0.022537228)
 shape = SubResource("BoxShape3D_8tq5e")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=556193524]
 transform = Transform3D(0.9368188, 5.282251e-09, 0.3498151, -0.16182445, 0.8865672, 0.4333723, -0.31013456, -0.46259993, 0.83055276, 0.41732815, 0.49980065, 1.148748)
 spot_angle = 16.05088
+
+[node name="ev_codenum" parent="." unique_id=1756210184 instance=ExtResource("3_blp7f")]

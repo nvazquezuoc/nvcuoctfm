@@ -3,13 +3,13 @@
 [ext_resource type="Script" uid="uid://dyxue7nbhqsph" path="res://scripts/perspective_changer.gd" id="1_655yk"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fjv51"]
-size = Vector3(2, 2, 1)
+size = Vector3(1, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mlj5j"]
-size = Vector3(2, 2, 1)
+size = Vector3(1, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_nd8w8"]
-size = Vector3(1, 2, 2)
+size = Vector3(0.5, 2, 1)
 
 [node name="PerspectiveChanger" type="Node3D" unique_id=317980224]
 script = ExtResource("1_655yk")
@@ -19,6 +19,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.5)
 input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AreaS" unique_id=523276284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.25)
 shape = SubResource("BoxShape3D_fjv51")
 
 [node name="AreaN" type="Area3D" parent="." unique_id=168037283]
@@ -26,6 +27,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.5)
 input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AreaN" unique_id=1437284059]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.25)
 shape = SubResource("BoxShape3D_mlj5j")
 
 [node name="AreaE" type="Area3D" parent="." unique_id=56079161]
@@ -33,6 +35,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
 input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AreaE" unique_id=304019250]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0, 0)
 shape = SubResource("BoxShape3D_nd8w8")
 
 [node name="AreaW" type="Area3D" parent="." unique_id=2054814579]
@@ -40,6 +43,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, 0)
 input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AreaW" unique_id=1683542572]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0, 0)
 shape = SubResource("BoxShape3D_nd8w8")
 
 [node name="Marker3D" type="Marker3D" parent="." unique_id=1716210484]

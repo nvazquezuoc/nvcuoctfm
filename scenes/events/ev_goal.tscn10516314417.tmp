@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bqor8htvslhpc"]
+
+[ext_resource type="Script" uid="uid://hve6d8tspup6" path="res://scripts/events/ev_goal.gd" id="1_axlop"]
+[ext_resource type="PackedScene" uid="uid://boan02pjbg3t" path="res://scenes/prop_elevator.tscn" id="1_lsbhy"]
+
+[node name="EvGoal" type="Node3D" unique_id=1006923895 node_paths=PackedStringArray("remote", "points_of_interest")]
+script = ExtResource("1_axlop")
+remote = NodePath("RemoteTransform3D")
+points_of_interest = [NodePath("Marker3D")]
+
+[node name="elevator" parent="." unique_id=1660700550 instance=ExtResource("1_lsbhy")]
+
+[node name="Marker3D" type="Marker3D" parent="." unique_id=1997682895]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0522373, -0.7107215)
+
+[node name="MarkerS" type="Marker3D" parent="." unique_id=2090155246]
+transform = Transform3D(1, 0, 0, 0, 0.9912155, 0.13225639, 0, -0.13225639, 0.9912155, 0, 1, 0.718)
+
+[node name="MarkerS2" type="Marker3D" parent="." unique_id=1339827934]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74996924, 1, -0.30695814)
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="." unique_id=977706084]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74996924, 1, -0.30695814)
+
+[node name="Timer" type="Timer" parent="." unique_id=751521084]

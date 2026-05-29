@@ -1,27 +1,33 @@
-[gd_scene format=3 uid="uid://c01mboxc8hj61"]
+[gd_scene format=3 uid="uid://dkp14l50sou64"]
 
-[ext_resource type="Script" uid="uid://btr01worbgshi" path="res://scripts/character_control_and_ai.gd" id="1_lrhn5"]
-[ext_resource type="PackedScene" uid="uid://d3njyijxnrn6x" path="res://resources/models/ztestAnimatedModel.res" id="2_my7n2"]
-[ext_resource type="PackedScene" uid="uid://ckl61jv6h4mki" path="res://resources/models/test_custom_new5.glb" id="3_lrhn5"]
+[ext_resource type="Script" uid="uid://cttat6ewdaf4o" path="res://scripts/enemy_base.gd" id="1_sw0xa"]
+[ext_resource type="PackedScene" uid="uid://d3njyijxnrn6x" path="res://resources/models/ztestAnimatedModel.res" id="2_j1ss0"]
+[ext_resource type="AudioStream" uid="uid://clm5ko1ivxr73" path="res://resources/sounds/enemySound.mp3" id="2_vv3x1"]
+[ext_resource type="PackedScene" uid="uid://crdogc3jwhxsl" path="res://resources/models/test_custom_new3.glb" id="3_j1ss0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nd8w8"]
 height = 1.8051758
 
-[node name="Character" type="CharacterBody3D" unique_id=326181993 node_paths=PackedStringArray("model_pivot")]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sw0xa"]
+radius = 0.57373047
+height = 1.9307251
+
+[node name="Enemy" type="CharacterBody3D" unique_id=326181993 node_paths=PackedStringArray("area_close", "timer", "model_pivot")]
 collision_layer = 2
-script = ExtResource("1_lrhn5")
+script = ExtResource("1_sw0xa")
+area_close = NodePath("Area3D")
+timer = NodePath("Timer")
+cry = ExtResource("2_vv3x1")
 SPEED = 0.8
-model_pivot = NodePath("test_custom_new5")
+model_pivot = NodePath("test_custom_new3")
 is_ai = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=686238657]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9025879, 0)
 shape = SubResource("CapsuleShape3D_nd8w8")
 
-[node name="exported-model2" parent="." unique_id=720630588 instance=ExtResource("2_my7n2")]
+[node name="exported-model2" parent="." unique_id=720630588 instance=ExtResource("2_j1ss0")]
 visible = false
-
-[node name="test_custom_new5" parent="." unique_id=936599216 instance=ExtResource("3_lrhn5")]
 
 [node name="RemoteTransform3D" type="RemoteTransform3D" parent="." unique_id=1403446548]
 transform = Transform3D(1, 0, 0, 0, 0.99127316, 0.13182388, 0, -0.13182388, 0.99127316, 0, 1, 0.718)
@@ -43,3 +49,15 @@ transform = Transform3D(-4.371139e-08, -0.13225639, 0.9912155, 0, 0.9912155, 0.1
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=413626094]
 path_desired_distance = 0.1
 target_desired_distance = 0.1
+
+[node name="Timer" type="Timer" parent="." unique_id=921002605]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=249547874]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1672039387]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9082947, 0)
+shape = SubResource("CapsuleShape3D_sw0xa")
+
+[node name="test_custom_new3" parent="." unique_id=933345214 instance=ExtResource("3_j1ss0")]

@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://1xb0tmcnpra8"]
+
+[ext_resource type="Script" uid="uid://dp8n3lbrcs2ui" path="res://scripts/ATEST_map_base.gd" id="1_byn7g"]
+[ext_resource type="Material" uid="uid://by0w2f105mc7b" path="res://resources/materials/test_room.tres" id="2_bicyl"]
+[ext_resource type="PackedScene" uid="uid://bqor8htvslhpc" path="res://scenes/events/ev_goal.tscn" id="2_eh1pw"]
+[ext_resource type="PackedScene" uid="uid://boan02pjbg3t" path="res://scenes/prop_elevator.tscn" id="2_mcx4n"]
+[ext_resource type="PackedScene" uid="uid://bror56m11b6pv" path="res://scenes/events/ev_lock.tscn" id="4_iyb8a"]
+[ext_resource type="PackedScene" uid="uid://ckx8vca0t0eax" path="res://scenes/events/ev_take_key.tscn" id="5_fktgb"]
+[ext_resource type="PackedScene" uid="uid://bwcehl3dwfxkx" path="res://scenes/events/ev_table.tscn" id="6_fktgb"]
+
+[node name="ZTestFragmentedMap" type="Node3D" unique_id=828860256 node_paths=PackedStringArray("_node_events")]
+script = ExtResource("1_byn7g")
+dict_event_scenes = Dictionary[StringName, PackedScene]({
+&"elevator": ExtResource("2_eh1pw"),
+&"spawn": ExtResource("2_mcx4n")
+})
+dict_locknkey = Dictionary[StringName, Array]({
+&"lock": [ExtResource("4_iyb8a"), ExtResource("5_fktgb")]
+})
+auxiliar_interactions = Array[PackedScene]([ExtResource("6_fktgb")])
+_node_events = NodePath("Events")
+
+[node name="Events" type="Node3D" parent="." unique_id=2097858974]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1013295988]
+material_override = ExtResource("2_bicyl")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1235604382]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1592394570]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1979829730]

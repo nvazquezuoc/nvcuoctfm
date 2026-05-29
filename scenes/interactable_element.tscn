@@ -3,9 +3,11 @@
 [ext_resource type="Script" uid="uid://bqhhrdl6bw7e1" path="res://scripts/interactable_area.gd" id="1_l13ge"]
 [ext_resource type="Script" uid="uid://d1w42prd0yblh" path="res://scripts/events/pickup_key.gd" id="2_4nlmd"]
 [ext_resource type="Script" uid="uid://c2tm060mjlwnk" path="res://scripts/events/use_key.gd" id="3_mp4ki"]
+[ext_resource type="Texture2D" uid="uid://cgu5jy5e4uw1n" path="res://resources/textures/keyicon.png" id="3_scy4b"]
+[ext_resource type="Texture2D" uid="uid://dedhpdgagwd7l" path="res://resources/textures/lock_icon.png" id="5_kxxpo"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4nlmd"]
-size = Vector3(2, 2, 2)
+size = Vector3(1, 2, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_mp4ki"]
 size = Vector3(1, 1, 0.5)
@@ -15,6 +17,7 @@ script = ExtResource("1_l13ge")
 
 [node name="Area3D" type="Area3D" parent="." unique_id=1345659439]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_mask = 2
 
 [node name="Shape" type="CollisionShape3D" parent="Area3D" unique_id=486308269]
 shape = SubResource("BoxShape3D_4nlmd")
@@ -22,6 +25,7 @@ shape = SubResource("BoxShape3D_4nlmd")
 [node name="pickup_key" type="Node3D" parent="." unique_id=85861358]
 visible = false
 script = ExtResource("2_4nlmd")
+interaction_icon = ExtResource("3_scy4b")
 
 [node name="mesh" type="MeshInstance3D" parent="pickup_key" unique_id=64023232]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.503, -0.75)
@@ -30,7 +34,11 @@ mesh = SubResource("BoxMesh_mp4ki")
 [node name="use_key" type="Node3D" parent="." unique_id=1376248990]
 visible = false
 script = ExtResource("3_mp4ki")
+interaction_icon = ExtResource("5_kxxpo")
 
 [node name="mesh" type="MeshInstance3D" parent="use_key" unique_id=1879331157]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.503, -0.75)
 mesh = SubResource("BoxMesh_mp4ki")
+
+[node name="MarkerS" type="Marker3D" parent="." unique_id=980417659]
+transform = Transform3D(1, 0, 0, 0, 0.9912155, 0.13225639, 0, -0.13225639, 0.9912155, 0, 1, 0.718)
