@@ -8,7 +8,7 @@ enum CARDINALS {
 	MAX,
 }
 
-const SPEED = 1.0
+@export var SPEED:float = 1.0
 const JUMP_VELOCITY = 4.5
 const SPIN_SPEED = 0.3
 
@@ -20,7 +20,9 @@ var animation_idx:int = 0
 var facing_direction:int = 0
 
 var cam_cardinal:CARDINALS = CARDINALS.N
-@onready var model_pivot:Node3D = $"exported-model2"
+
+@export var model_pivot:Node3D
+#@onready var model_pivot:Node3D = $"exported-model2"
 @onready var _agent:NavigationAgent3D = $NavigationAgent3D
 @onready var transform_cam:RemoteTransform3D = $RemoteTransform3D
 @onready var marker_cam:Array[Node3D] = [
@@ -48,24 +50,47 @@ func _ready() -> void:
 	set_animation(&"Idle")
 	facing_direction = 1
 	model_pivot.rotation.y = PI/2
-	animation_tree = model_pivot.get_node(^"AnimationTree")
-	if(player_cam):
-		transform_cam.remote_path = transform_cam.get_path_to(player_cam)
+	#animation_tree = model_pivot.get_node(^"AnimationTree")
+	#if(is_player):
+		#take_cam_control(player_cam)
+	#if(player_cam):
+	#	transform_cam.remote_path = transform_cam.get_path_to(player_cam)
 	pass
 	
-func disable()->void:
+func disable(with_colisions:bool = false)->void:
 	set_physics_process(false)
+	if(not with_colisions):
+		collision_layer = 0
+	model_pivot.visible = false
 	pass
 	
 func enable()->void:
 	set_physics_process(true)
+	collision_layer = 2
+	model_pivot.visible = true
+	pass
+	
+func take_cam_control(cam:Camera3D=null)->void:
+	var other_remote:RemoteTransform3D
+	if(cam == null):
+		if(player_cam):
+			cam = player_cam
+		pass
+	if(cam != null):
+		if(cam.has_meta(&"remote")):
+			other_remote = cam.get_meta(&"remote")
+			other_remote.remote_path = ^""
+			pass
+		cam.set_meta(&"remote", transform_cam)
+		transform_cam.remote_path = transform_cam.get_path_to(cam)
+		pass
 	pass
 	
 func set_animation(animation:StringName)->void:
 	animation_player.play(animation)
 	pass
 
-func spin_to(to:CARDINALS=CARDINALS.NONE)->void:
+func spin_to(to:int=CARDINALS.NONE)->void:
 	if(to == CARDINALS.NONE):
 		to = (cam_cardinal + 1) % CARDINALS.MAX
 	var prev_dir:int = facing_direction
@@ -73,13 +98,26 @@ func spin_to(to:CARDINALS=CARDINALS.NONE)->void:
 	cam_cardinal = to
 	var tween = create_tween()
 	tween.tween_property(transform_cam, ^"transform", marker_cam[cam_cardinal].transform, SPIN_SPEED)
-	var tween2 = create_tween()
-	if(prev_dir < 0):
-		tween2.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][1], SPIN_SPEED)
-	else:
-		tween2.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][0], SPIN_SPEED)
+	model_pivot.transform = transform_list[cam_cardinal][prev_dir]
+	#var tween2 = create_tween()
+	#if(prev_dir < 0):
+	#	tween2.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][1], SPIN_SPEED)
+	#else:
+	#	tween2.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][0], SPIN_SPEED)
 	await tween.finished
 	facing_direction = prev_dir
+	pass
+	
+func set_orientation(to:CARDINALS=CARDINALS.NONE)->void:
+	if(to == CARDINALS.NONE):
+		to = (cam_cardinal + 1) % CARDINALS.MAX
+	var prev_dir:int = facing_direction
+	cam_cardinal = to
+	transform_cam.transform = Transform3D(marker_cam[to].transform)
+	if(facing_direction < 0):
+		model_pivot.transform = Transform3D(transform_list[to][1])
+	else:
+		model_pivot.transform = Transform3D(transform_list[to][0])
 	pass
 
 # CC0/public domain/use for whatever you want no need to credit
@@ -106,9 +144,12 @@ func _push_away_rigid_bodies():
 			var push_force = mass_ratio * 5.0
 			c.get_collider().apply_impulse(push_dir * velocity_diff_in_push_dir * push_force, c.get_position() - c.get_collider().global_position)
 
-func set_movement_target(movement_target: Vector3)->void:
-	$NavigationAgent3D.set_target_position(movement_target)
+func set_movement_target(movement_target: Vector3, return_control:bool = false)->void:
+	is_ai = true
+	_agent.set_target_position(movement_target)
 	await _agent.path_changed
+	if(return_control):
+		is_ai = false
 	pass
 
 func turn_to(direction:Vector3)->void:
@@ -125,15 +166,18 @@ func _on_velocity_computed(safe_velocity: Vector3):
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
-		
+	
 	if(is_ai):
 		# Do not query when the map has never synchronized and is empty.
 		if NavigationServer3D.map_get_iteration_id(_agent.get_navigation_map()) == 0:
-			animation_tree.set(&"parameters/blend_position", velocity.length())
+			#animation_tree.set(&"parameters/blend_position", velocity.length())
+			animation_player.play(&"Walk")
 			return
 		if _agent.is_navigation_finished():
+			position = _agent.target_position
 			destination_reached.emit()
-			animation_tree.set(&"parameters/blend_position", velocity.length())
+			#animation_tree.set(&"parameters/blend_position", velocity.length())
+			animation_player.play(&"Idle")
 			return
 
 		var next_path_position: Vector3 = _agent.get_next_path_position()
@@ -147,13 +191,15 @@ func _physics_process(delta: float) -> void:
 		if not is_on_floor():
 			velocity += get_gravity() * delta
 			
-		animation_tree.set(&"parameters/blend_position", velocity.length())
+		#animation_tree.set(&"parameters/blend_position", velocity.length())
+		animation_player.play(&"Walk")
 		return
 
 	# Handle jump.
 	if (_input_list[InputManager.Indexes.OK] == InputManager.States.JustPressed) and is_on_floor():
 		if(is_instance_valid(interactable_element)):
-			interactable_element.call_event(self)
+			#interactable_element.call_event(self)
+			interactable_element.event(self)
 		#if(facing_direction != 0):
 		#	await spin_to()
 		#	pass
@@ -163,27 +209,41 @@ func _physics_process(delta: float) -> void:
 	var input_dir := Vector2(_input_list[InputManager.Indexes.AXIS1], _input_list[InputManager.Indexes.AXIS2])
 	var direction := (transform_cam.basis * Vector3(input_dir.x, 0, 0)).normalized() * SPEED
 	
-	match facing_direction:
-		1:
-			if(0 < _input_list[InputManager.Indexes.AXIS1]):
-				velocity.x = direction.x * SPEED
-				velocity.z = direction.z * SPEED
-			elif(_input_list[InputManager.Indexes.AXIS1] < 0):
-				facing_direction = 0
-				var tween = create_tween()
-				tween.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][1], SPIN_SPEED)
-				await tween.finished
+	if false:		
+		match facing_direction:
+			1:
+				if(0 < _input_list[InputManager.Indexes.AXIS1]):
+					velocity.x = direction.x * SPEED
+					velocity.z = direction.z * SPEED
+				elif(_input_list[InputManager.Indexes.AXIS1] < 0):
+					facing_direction = 0
+					#var tween = create_tween()
+					#tween.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][1], SPIN_SPEED)
+					#await tween.finished
+					model_pivot.transform = transform_list[cam_cardinal][1]
+					facing_direction = -1
+			-1:
+				if(0 < _input_list[InputManager.Indexes.AXIS1]):
+					facing_direction = 0
+					#var tween = create_tween()
+					#tween.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][0], SPIN_SPEED)
+					#await tween.finished
+					model_pivot.transform = transform_list[cam_cardinal][0]
+					facing_direction = 1
+				elif(_input_list[InputManager.Indexes.AXIS1] < 0):
+					velocity.x = direction.x * SPEED
+					velocity.z = direction.z * SPEED
+	else:
+		if(_input_list[InputManager.Indexes.AXIS1] != 0):
+			if(_input_list[InputManager.Indexes.AXIS1] < 0):
+				model_pivot.transform = transform_list[cam_cardinal][1]
 				facing_direction = -1
-		-1:
-			if(0 < _input_list[InputManager.Indexes.AXIS1]):
-				facing_direction = 0
-				var tween = create_tween()
-				tween.tween_property(model_pivot, ^"transform", transform_list[cam_cardinal][0], SPIN_SPEED)
-				await tween.finished
+			elif(0 < _input_list[InputManager.Indexes.AXIS1]):
+				model_pivot.transform = transform_list[cam_cardinal][0]
 				facing_direction = 1
-			elif(_input_list[InputManager.Indexes.AXIS1] < 0):
-				velocity.x = direction.x * SPEED
-				velocity.z = direction.z * SPEED
+				
+		velocity.x = direction.x * SPEED
+		velocity.z = direction.z * SPEED
 	
 	if(not _input_list[InputManager.Indexes.AXIS1]):
 		velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -199,4 +259,8 @@ func _physics_process(delta: float) -> void:
 
 	_push_away_rigid_bodies()
 	move_and_slide()
-	animation_tree.set(&"parameters/blend_position", velocity.length())
+	#animation_tree.set(&"parameters/blend_position", velocity.length())
+	if(velocity.length() == 0):
+		animation_player.play(&"Idle")
+	else:
+		animation_player.play(&"Walk")

@@ -19,13 +19,17 @@ enum States {
 }
 
 var _input_list : Array = []
+@export var phone_mode:bool = false
 @export var target : Node = null
+@export var phone_btns:Dictionary[StringName, Button]
 static var _instance:InputManager
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_process(false)
 	_input_list = create_empty()
+	if(is_instance_valid(MainGameNode.instance)):
+		phone_mode = MainGameNode.instance.phone_mode
 	if(not is_instance_valid(_instance)):
 		_instance = self
 		set_target(target)
@@ -38,7 +42,7 @@ func set_target(new_target=null)->void:
 		target._input_list = create_empty()
 	target = new_target
 	if(target):
-		target._input_list = _input_list
+		_input_list = target._input_list
 	
 func set_btn_state(idx:int, action:StringName)->void:
 	if(Input.is_action_pressed(action)):
@@ -58,10 +62,23 @@ func set_axis_state(idx:int, negative:StringName, positive:StringName)->void:
 	pass
 
 func _physics_process(delta: float) -> void:
-	set_axis_state(Indexes.AXIS1, &"ui_left", &"ui_right")
-	set_axis_state(Indexes.AXIS2, &"ui_up", &"ui_down")
-	set_btn_state(Indexes.OK, &"ui_accept")
-	set_btn_state(Indexes.CANCEL, &"ui_cancel")
+	if(phone_mode):
+		_input_list[Indexes.AXIS1] = 0
+		if(phone_btns[&"ui_left"].pressed):
+			_input_list[Indexes.AXIS1] = -1
+		elif(phone_btns[&"ui_right"].pressed):
+			_input_list[Indexes.AXIS1] = 1
+			
+		_input_list[Indexes.OK] = States.Released
+		if(phone_btns[&"ui_accept"].pressed):
+			_input_list[Indexes.OK] = States.JustPressed
+		pass
+	else:
+		set_axis_state(Indexes.AXIS1, &"ui_left", &"ui_right")
+		set_axis_state(Indexes.AXIS2, &"ui_up", &"ui_down")
+		set_btn_state(Indexes.OK, &"ui_accept")
+		set_btn_state(Indexes.CANCEL, &"ui_cancel")
+		pass
 	pass
 	
 static func create_empty()->Array:

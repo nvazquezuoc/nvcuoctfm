@@ -17,6 +17,8 @@ config/icon="res://icon.svg"
 
 [display]
 
+window/size/viewport_width=682
+window/size/viewport_height=384
 window/stretch/mode="viewport"
 window/vsync/vsync_mode=0
 
@@ -26,4 +28,7 @@ window/vsync/vsync_mode=0
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
+textures/decals/filter=0
+textures/light_projectors/filter=0

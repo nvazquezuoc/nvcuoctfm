@@ -1,4 +1,4 @@
-extends Node3D
+extends interactable_base
 
 func _ready() -> void:
 	set_process(false)

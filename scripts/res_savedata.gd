@@ -9,6 +9,6 @@ var score_list:Array = []
 func _ready() -> void:
 	pass # Replace with function body.
 
-func add_score(score:int)->void:
-	score_list.push_back([Time.get_datetime_string_from_system(), str(score)])
+func add_score(score:int, seed:int)->void:
+	score_list.push_back([Time.get_datetime_string_from_system(), str(score), seed])
 	pass

@@ -4,7 +4,8 @@ extends Node3D
 var Area:Area3D = $Area3D
 @onready var pickupkey = $pickup_key
 @onready var lock = $use_key
-@export var active_event:Node3D= null
+@export var active_event:interactable_base= null
+var is_enabled:bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -20,11 +21,11 @@ func _process(delta: float) -> void:
 	pass
 	
 func _body_enters(body:Node3D)->void:
-	if(is_instance_of(body, NavigableCharacter)):
+	if(is_instance_of(body, NavigableCharacter) and is_enabled):
 		var chr:NavigableCharacter = body as NavigableCharacter
 		if(chr.is_player):
-			chr.interactable_element = self
-			print("player entered!")
+			active_event.on_enter(chr)
+			#print("player entered!")
 			pass
 		pass
 	pass
@@ -33,9 +34,10 @@ func _body_exits(body:Node3D)->void:
 	if(is_instance_of(body, NavigableCharacter)):
 		var chr:NavigableCharacter = body as NavigableCharacter
 		if(chr.is_player):
+			active_event.on_exit(chr)
 			if(chr.interactable_element == self):
-				chr.interactable_element = null
-				print("player exited")
+				active_event.on_exit(chr)
+				#print("player exited")
 			pass
 		pass
 	pass
@@ -47,6 +49,19 @@ func call_event(chr:NavigableCharacter)->void:
 			Area.body_entered.disconnect(tri["callable"])
 		for tri in Area.body_exited.get_connections():
 			Area.body_exited.disconnect(tri["callable"])
+	pass
+	
+func disable_event(chr:NavigableCharacter)->void:
+	chr.interactable_element = null
+	GameplayManager.instance.set_interaction_icon(null)
+	active_event.visible = false
+	is_enabled = false
+	pass
+	
+func set_active_event(new_event:interactable_base=null)->void:
+	active_event = new_event
+	new_event.interaction_node = self
+	add_child(new_event)
 	pass
 	
 func set_event_key()->void:

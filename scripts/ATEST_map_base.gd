@@ -1,6 +1,8 @@
 @tool
 extends Node3D
 
+class_name MapNode
+
 enum CARDINALS {
 	NONE=-1,
 	N,E,S,W,
@@ -11,18 +13,26 @@ enum CARDINALS {
 @export var tile_size:float = 2
 @export var intersection_pckscn:PackedScene = preload("res://scenes/perspective_changer.tscn")
 @export var interaction_pckscn:PackedScene = preload("res://scenes/interactable_element.tscn")
+@export var dict_event_scenes:Dictionary[StringName, PackedScene] = {}
+@export var dict_locknkey:Dictionary[StringName, Array]
+@export var auxiliar_interactions:Array[PackedScene] = []
 var _texture_map_img:Image
 var _default_material = preload("res://resources/materials/test_room.tres")
 var _meshes_map:Node3D
 @export var player_spawn:Vector3 = Vector3(-1, -1, -1)
 @onready var _navigation_region:NavigationRegion3D = $NavigationRegion3D
+@export var _node_events:Node3D
+@export_storage var dict_map_data:Dictionary = {}
+var floor_number:int = -1
+var spawn_node:interactable_base
+var milisec_mapstart:int = 0
 
 func _ready()->void:
 	if(texture_map):
 		_texture_map_img = texture_map.get_image()
 	if not Engine.is_editor_hint():
-		setup_navmesh()
-		setup_event_entities()
+		generate_navmesh()
+		#generate_event_entities()
 		if(false):
 			$StaticBody3D.input_event.connect(func(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int):
 				if event is InputEventMouseButton and event.pressed:
@@ -34,8 +44,12 @@ func regenerate() -> void:
 	
 	for child in $Events.get_children():
 		child.queue_free()
+	
+	setup_data_dict()
+	setup_data_points_of_interest()
 	setup_visualmesh()
 	setup_collisions()
+	player_spawn = tilecoord2worldposition(dict_map_data["p"]["s"])
 	pass
 	
 func get_conections4(x:int, y:int)->Array[bool]:
@@ -70,6 +84,77 @@ func get_diagonals(x:int, y:int)->Array[bool]:
 	
 	return result
 
+func setup_data_dict()->void:
+	var dict_valid:Dictionary[Vector2i, int] = {}
+	var dict_g:Dictionary = {}
+	var dict_inter:Dictionary[Vector2i, Array] = {}
+	var con4:Array[bool]
+	var connections:int = 0
+	var tile_mode:int = 0 # 0 unassigned, 1 corner, 2 cross, 3 vertical, 4 horizonta, 5 endv, 6 endh
+	for y in range(_texture_map_img.get_height()):
+		for x in range(_texture_map_img.get_width()):
+			if(_texture_map_img.get_pixel(x, y) != Color.WHITE):
+				con4 = get_conections4(x, y)
+				connections = 0
+				tile_mode = 0
+				for b in con4:
+					if(b):
+						connections += 1
+				if(1 < connections):
+					if(2 == connections and !(con4[0] and con4[2]) and !(con4[1] and con4[3])):
+						# CORNER
+						tile_mode = 1
+						dict_inter[Vector2i(x, y)] = con4
+						pass
+					elif(3 == connections):
+						# CROSS
+						tile_mode = 2
+						dict_inter[Vector2i(x, y)] = con4
+						pass
+					else:
+						# PATH
+						if(con4[0] and con4[2]):
+							# VERTICAL
+							tile_mode = 3
+							pass
+						else:
+							# HORIZONTAL
+							tile_mode = 4
+							pass
+						dict_valid[Vector2i(x, y)] = tile_mode
+				else:
+					# DEADEND
+					if(con4[0] or con4[2]):
+						# VERTICAL
+						tile_mode = 5
+						pass
+					else:
+						# HORIZONTAL
+						tile_mode = 6
+						pass
+					dict_valid[Vector2i(x, y)] = tile_mode
+				dict_g[Vector2i(x, y)] = [con4, tile_mode]
+	dict_map_data["g"] = dict_g
+	dict_map_data["v"] = dict_valid
+	dict_map_data["i"] = dict_inter
+	dict_map_data["p"] = { "width" : _texture_map_img.get_width(), "height" : _texture_map_img.get_height(),
+	"e":[]}
+	pass
+
+func setup_data_points_of_interest()->void:
+	var idx:int
+	var valids:Dictionary = dict_map_data["v"]
+	var points:Dictionary = dict_map_data["p"]
+	# Create spawn
+	idx = randi() % valids.size()
+	points["s"] = valids.keys()[idx]
+	valids.erase(valids.keys()[idx])
+	# Create exit
+	idx = randi() % valids.size()
+	points["g"] = valids.keys()[idx]
+	valids.erase(valids.keys()[idx])
+	pass
+
 func setup_visualmesh()->void:
 	var con4:Array[bool]
 	var offset:float = tile_size
@@ -78,6 +163,7 @@ func setup_visualmesh()->void:
 	var connections:int = 0
 	var pos_offset:Vector3
 	var ground:Array = _meshes_map.get_node(^"Ground").mesh.surface_get_arrays(0)
+	var tile_mode:int = 0
 	
 	var wall:Array = _meshes_map.get_node(^"Wall").mesh.surface_get_arrays(0)
 	var wall_oriented:Array = [wall]
@@ -114,73 +200,39 @@ func setup_visualmesh()->void:
 	new_array[Mesh.ARRAY_TEX_UV] = array_uv
 	new_array[Mesh.ARRAY_INDEX] = array_idx
 	var __data:Array
-	for y in range(_texture_map_img.get_height()):
-		for x in range(_texture_map_img.get_width()):
-			if(_texture_map_img.get_pixel(x, y) != Color.WHITE):
-				if(_texture_map_img.get_pixel(x, y) == Color8(0, 0, 1)):
-					player_spawn = position + Vector3(x*tile_size,0,y*tile_size)
+	var dict_g:Dictionary = dict_map_data["g"]
+
+	for v2i in dict_g:
+		var x:int = v2i.x
+		var y:int = v2i.y
+		var tile_data:Array = dict_g[v2i]
+		con4 =dict_g[v2i][0]
+		tile_mode = dict_g[v2i][1]
+		pos_offset = Vector3(x*offset,0,y*offset)
 				
-				con4 = get_conections4(x, y)
-				pos_offset = Vector3(x*offset,0,y*offset)
-				connections = 0
-				diagonals = 0
-				
-				var d = get_diagonals(x, y)
-				for b in d:
-					if(b):
-						diagonals+=1
-				for b in con4:
-					if(b):
-						connections += 1
-				if(1 < connections):
-					if(2 == connections and !(con4[0] and con4[2]) and !(con4[1] and con4[3])):
-						print("Corner without diagonalsB!")
-						print("intersection at ",x,", ", y, " with conections ", con4,)
-						var intersection_node:Node3D = intersection_pckscn.instantiate()
-						intersection_node.position = Vector3(x*offset,0,y*offset)
-						intersection_node.set_connections(con4)
-						_add_owned_child(intersection_node, ^"Events")
-					elif(3 == connections):
-						print("3 Connections!")
-						print(x,", ", y, " with conections ", con4,)
-						var intersection_node:Node3D = intersection_pckscn.instantiate()
-						intersection_node.position = Vector3(x*offset,0,y*offset)
-						intersection_node.set_connections(con4)
-						_add_owned_child(intersection_node, ^"Events")
-						pass
-					else:
-						if(!(con4[0] and con4[2]) and !(con4[1] and con4[3])):
-							print("Corner without diagonalsA!")
-							print("intersection at ",x,", ", y, " with conections ", con4,)
-							if(false):
-								var intersection_node:Node3D = intersection_pckscn.instantiate()
-								intersection_node.position = Vector3(x*offset,0,y*offset)
-								intersection_node.set_connections(con4)
-								_add_owned_child(intersection_node, ^"Events")
-				
-				# vtx, nrm, uv, idx
-				__data = [new_idx_offset, pos_offset, new_array]
-				_mesh_add_arraymesh(__data, ground)
-				new_idx_offset = __data[0]
-				__data = [new_idx_offset, pos_offset, new_array]
-				_mesh_add_arraymesh(__data, ceiling)
-				new_idx_offset = __data[0]
-				if(not con4[0]):
-					__data = [new_idx_offset, pos_offset, new_array]
-					_mesh_add_arraymesh(__data, wall_oriented[2])
-					new_idx_offset = __data[0]
-				if(not con4[1]):
-					__data = [new_idx_offset, pos_offset, new_array]
-					_mesh_add_arraymesh(__data, wall_oriented[1])
-					new_idx_offset = __data[0]
-				if(not con4[2]):
-					__data = [new_idx_offset, pos_offset, new_array]
-					_mesh_add_arraymesh(__data, wall_oriented[0])
-					new_idx_offset = __data[0]
-				if(not con4[3]):
-					__data = [new_idx_offset, pos_offset, new_array]
-					_mesh_add_arraymesh(__data, wall_oriented[3])
-					new_idx_offset = __data[0]
+		# vtx, nrm, uv, idx
+		__data = [new_idx_offset, pos_offset, new_array]
+		_mesh_add_arraymesh(__data, ground)
+		new_idx_offset = __data[0]
+		__data = [new_idx_offset, pos_offset, new_array]
+		_mesh_add_arraymesh(__data, ceiling)
+		new_idx_offset = __data[0]
+		if(not con4[0]):
+			__data = [new_idx_offset, pos_offset, new_array]
+			_mesh_add_arraymesh(__data, wall_oriented[2])
+			new_idx_offset = __data[0]
+		if(not con4[1]):
+			__data = [new_idx_offset, pos_offset, new_array]
+			_mesh_add_arraymesh(__data, wall_oriented[1])
+			new_idx_offset = __data[0]
+		if(not con4[2]):
+			__data = [new_idx_offset, pos_offset, new_array]
+			_mesh_add_arraymesh(__data, wall_oriented[0])
+			new_idx_offset = __data[0]
+		if(not con4[3]):
+			__data = [new_idx_offset, pos_offset, new_array]
+			_mesh_add_arraymesh(__data, wall_oriented[3])
+			new_idx_offset = __data[0]
 	var new_array_mesh:ArrayMesh = ArrayMesh.new()
 	new_array_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, new_array)
 	main_mesh.mesh = new_array_mesh
@@ -195,16 +247,19 @@ func setup_collisions()->void:
 	n_shape.shape = shape
 	pass
 	
-func setup_navmesh()->void:
+func generate_navmesh()->void:
+	var dict_g:Dictionary = dict_map_data["g"]
 	var navigation_mesh: NavigationMesh = NavigationMesh.new()
 	_texture_map_img = texture_map.get_image()
+	var width:int = _texture_map_img.get_width()
+	var height:int = _texture_map_img.get_height()
 	#var region_rid: RID = NavigationServer3D.region_create()
 
 	# Enable the region and set it to the default navigation map.
 	#NavigationServer3D.region_set_enabled(region_rid, true)
 	#NavigationServer3D.region_set_map(region_rid, get_world_3d().get_navigation_map())
 	var tile_connections:int = -1
-	var connections:Array[bool] = []
+	var connections:Array = []
 	var _next_coord:Vector2i = Vector2i(-1, -1)
 	var _walkable_coord:bool = true
 	var _walk_end:Vector2i = Vector2i(-1, -1)
@@ -212,101 +267,101 @@ func setup_navmesh()->void:
 	var _terrain_dict:Dictionary[Vector2i, Vector2i] = {}
 	var coord:Vector2i = Vector2i(-1, -1)
 	var h_off:float = 0
-	for y in range(_texture_map_img.get_height()):
-		for x in range(_texture_map_img.get_width()):
-			if(_texture_map_img.get_pixel(x, y) != Color.WHITE):
-				coord = Vector2i(x, y)
-				if(not coord in _terrain_dict):
-					tile_connections = 0
-					connections = get_conections4(x, y)
-					_walk_end = coord
-					for val in connections:
-						if(val):
-							tile_connections += 1
-					if(0 < tile_connections):
-						if(tile_connections < 2):
-							# is end
-							# goes from top left to bot right
-							# only right and bot make sense to check
-							_next_coord = coord
-							_walkable_coord = true
-							var step = Vector2i(0, 1)
-							if(connections[CARDINALS.E]):
-								step = Vector2i(1, 0)
-								pass
-							elif(connections[CARDINALS.S]):
-								pass
-							else:
-								print("ERROR! IS END", coord)
-							while(_walkable_coord and tile_connections < 3):
-								_walk_end = _next_coord
-								_terrain_dict[_next_coord] = coord
-								_next_coord += step
-								if(_next_coord.x < _texture_map_img.get_width() and
-								_next_coord.y < _texture_map_img.get_height()):
-									_walkable_coord = _texture_map_img.get_pixel(_next_coord.x, _next_coord.y) != Color.WHITE
-									if(_walkable_coord):
-										tile_connections = 0
-										connections = get_conections4(_next_coord.x, _next_coord.y)
-										for val in connections:
-											if(val):
-												tile_connections += 1
-								else:
-									_walkable_coord = false
-							_walk_lists.push_back([coord, _walk_end])
-							pass
-						elif(tile_connections == 2):
-							if((connections[CARDINALS.N] and (connections[CARDINALS.E] or
-							connections[CARDINALS.W])) or
-								(connections[CARDINALS.S] and (connections[CARDINALS.E] or
-								connections[CARDINALS.W]))):
-								# is corner
-								_terrain_dict[coord] = coord
-								_walk_lists.push_back([coord, coord])
-								pass
-							else:
-								# is walk after corner or intersection
-								
-								_next_coord = coord
-								_walkable_coord = true
-								var step = Vector2i(0, 1)
-								if(connections[CARDINALS.E]):
-									step = Vector2i(1, 0)
-									pass
-								elif(connections[CARDINALS.S]):
-									pass
-								else:
-									print("ERROR! IS END", coord)
-								while(_walkable_coord and tile_connections < 3):
-									_walk_end = _next_coord
-									_terrain_dict[_next_coord] = coord
-									_next_coord += step
-									
-									if(_next_coord.x < _texture_map_img.get_width() and
-									_next_coord.y < _texture_map_img.get_height()):
-										_walkable_coord = _texture_map_img.get_pixel(_next_coord.x, _next_coord.y) != Color.WHITE
-										if(_walkable_coord):
-											tile_connections = 0
-											connections = get_conections4(_next_coord.x, _next_coord.y)
-											for val in connections:
-												if(val):
-													tile_connections += 1
-											if((connections[CARDINALS.N] and (connections[CARDINALS.E] or
-												connections[CARDINALS.W])) or
-													(connections[CARDINALS.S] and (connections[CARDINALS.E] or
-													connections[CARDINALS.W]))):
-												tile_connections = 7
-												pass
-									else:
-										_walkable_coord = false
-								_walk_lists.push_back([coord, _walk_end])
-								pass
-						else:
-							# is intersection
-							_terrain_dict[coord] = coord
-							_walk_lists.push_back([coord, coord])
-							pass
+	for v2i in dict_g:
+		coord = v2i
+		if(not coord in _terrain_dict):
+			tile_connections = 0
+			connections = dict_g[v2i][0]
+			_walk_end = coord
+			for val in connections:
+				if(val):
+					tile_connections += 1
+			if(0 < tile_connections):
+				if(tile_connections < 2):
+					# is end
+					# goes from top left to bot right
+					# only right and bot make sense to check
+					_next_coord = coord
+					_walkable_coord = true
+					var step = Vector2i(0, 1)
+					if(connections[CARDINALS.E]):
+						step = Vector2i(1, 0)
 						pass
+					elif(connections[CARDINALS.S]):
+						pass
+					else:
+						pass
+						#print("ERROR! IS END", coord)
+					while(_walkable_coord and tile_connections < 3):
+						_walk_end = _next_coord
+						_terrain_dict[_next_coord] = coord
+						_next_coord += step
+						if(_next_coord.x < width and
+						_next_coord.y < height):
+							_walkable_coord = _texture_map_img.get_pixel(_next_coord.x, _next_coord.y) != Color.WHITE
+							if(_walkable_coord):
+								tile_connections = 0
+								connections = get_conections4(_next_coord.x, _next_coord.y)
+								for val in connections:
+									if(val):
+										tile_connections += 1
+						else:
+							_walkable_coord = false
+					_walk_lists.push_back([coord, _walk_end])
+					pass
+				elif(tile_connections == 2):
+					if((connections[CARDINALS.N] and (connections[CARDINALS.E] or
+					connections[CARDINALS.W])) or
+						(connections[CARDINALS.S] and (connections[CARDINALS.E] or
+						connections[CARDINALS.W]))):
+						# is corner
+						_terrain_dict[coord] = coord
+						_walk_lists.push_back([coord, coord])
+						pass
+					else:
+						# is walk after corner or intersection
+						
+						_next_coord = coord
+						_walkable_coord = true
+						var step = Vector2i(0, 1)
+						if(connections[CARDINALS.E]):
+							step = Vector2i(1, 0)
+							pass
+						elif(connections[CARDINALS.S]):
+							pass
+						else:
+							pass
+							#print("ERROR! IS END", coord)
+						while(_walkable_coord and tile_connections < 3):
+							_walk_end = _next_coord
+							_terrain_dict[_next_coord] = coord
+							_next_coord += step
+							
+							if(_next_coord.x < width and
+							_next_coord.y < height):
+								_walkable_coord = _texture_map_img.get_pixel(_next_coord.x, _next_coord.y) != Color.WHITE
+								if(_walkable_coord):
+									tile_connections = 0
+									connections = get_conections4(_next_coord.x, _next_coord.y)
+									for val in connections:
+										if(val):
+											tile_connections += 1
+									if((connections[CARDINALS.N] and (connections[CARDINALS.E] or
+										connections[CARDINALS.W])) or
+											(connections[CARDINALS.S] and (connections[CARDINALS.E] or
+											connections[CARDINALS.W]))):
+										tile_connections = 7
+										pass
+							else:
+								_walkable_coord = false
+						_walk_lists.push_back([coord, _walk_end])
+						pass
+				else:
+					# is intersection
+					_terrain_dict[coord] = coord
+					_walk_lists.push_back([coord, coord])
+					pass
+				pass
 	# STEP 1: Add unrepeated vertices to an array
 	# STEP 2: Add vertices of each tri to an array
 	# STEP 3: Convert Arrays to packed array
@@ -471,36 +526,86 @@ func setup_navmesh()->void:
 		#NavigationServer3D.region_set_navigation_mesh(region_rid, navigation_mesh)
 	pass
 	
-func setup_event_entities()->void:
-	var col:Color
-	for y in range(_texture_map_img.get_height()):
-		for x in range(_texture_map_img.get_width()):
-			col = _texture_map_img.get_pixel(x, y)
-			if(col.r8 == 0):
-				if(col == Color8(0, 0, 1)):
-					player_spawn = position + Vector3(x*tile_size,0,y*tile_size)
-				# key event
-				elif(col.b8 == 2):
-					if(col.g8 == 0):
-						# find key
-						var ev_p:Vector3 = position + Vector3(x*tile_size,0,y*tile_size)
-						var element:Node3D = interaction_pckscn.instantiate()
-						element.set_event_key()
-						element.position = ev_p
-						#_add_owned_child(element, ^"Events")
-						add_child(element)
-						pass
-					elif(col.g8 == 1):
-						# key hole
-						var ev_p:Vector3 = position + Vector3(x*tile_size,0,y*tile_size)
-						var element:Node3D = interaction_pckscn.instantiate()
-						element.set_event_lock()
-						element.position = ev_p
-						#_add_owned_child(element, ^"Events")
-						add_child(element)
-						pass
+func generate_event_entities()->void:
+	#var tilemode:int = 0
+	var dict_g = dict_map_data["g"]
+	var dict_valid = dict_map_data["v"]
+	var dict_points = dict_map_data["p"]
+	var dict_inter = dict_map_data["i"]
+	var dictavailable:Dictionary = dict_valid.duplicate()
+	var con4:Array[bool]
+	
+	#var event_scene:PackedScene = dict_event_scenes[&"elevator"]
+	#var event_node:Node3D = interaction_pckscn.instantiate()
+	#var goal_interaction:interactable_base = event_scene.instantiate()
+	#var event_pck:PackedScene = dict_event_scenes[&"elevator"]
+	var event_node:Node3D = interaction_pckscn.instantiate()
+	
+	var test_cross = load("res://scenes/events/ev_cross.tscn")
+	var test_cross_node:Node3D
+	for key in dict_inter:
+		con4.assign(dict_inter[key])
+		event_node = interaction_pckscn.instantiate()
+		event_node.position = tilecoord2worldposition(key)
+		test_cross_node = test_cross.instantiate()
+		test_cross_node.set_connections(con4)
+		event_node.set_active_event(test_cross_node)
+		_node_events.add_child(event_node)
+		
+	dictavailable.erase(dict_points["s"])
+	
+	var prev_lock:interactable_base = add_event_at(dict_event_scenes[&"elevator"], dict_points["g"],
+	dict_g, dict_points, dictavailable)
+	
+	event_node = dict_event_scenes[&"elevator"].instantiate()
+	event_node.position = tilecoord2worldposition(dict_points["s"])
+	var tilemode:int = dict_g[dict_points["s"]][1]
+	if(tilemode == 3 or tilemode == 5):
+		event_node.rotation_degrees.y = -90
+	_node_events.add_child(event_node)
+	
+	var next_pair:Array = dict_locknkey[&"lock"]
+	var next_lock:Node3D = next_pair[0].instantiate()
+	var next_key:PackedScene = next_pair[1]
+	prev_lock.add_secondary_interaction(next_lock)
+	prev_lock = add_event_at(auxiliar_interactions[0], get_random_valid(dictavailable),
+	dict_g, dict_points, dictavailable)
+	prev_lock.add_secondary_interaction(next_key.instantiate())
+	
+	#prev_lock = add_event_at(next_key, get_random_valid(dictavailable),
+	#dict_g, dict_points, dictavailable)
+	dict_points["e"].append(get_random_valid(dictavailable))
 	pass
 	
+func get_random_valid(dictavailable:Dictionary)->Vector2i:
+	var idx:int = GlobalVariables.randi_l(0, dictavailable.size()-1)#randi() % dictavailable.size()
+	#idx = GlobalVariables.randi_l(0, dictavailable.size())
+	return dictavailable.keys()[idx]
+	
+func add_event_at(interaction:PackedScene, tilecoord:Vector2i, dict_g:Dictionary, dict_points:Dictionary,
+	dictavailable:Dictionary)->interactable_base:
+	var tilemode:int = 0
+	var event_node:Node3D = interaction_pckscn.instantiate()
+	var inter_node:interactable_base = interaction.instantiate()
+	event_node.set_active_event(inter_node)
+	tilemode = dict_g[tilecoord][1]
+	event_node.position = tilecoord2worldposition(tilecoord)
+	dictavailable.erase(tilecoord)
+	if(tilemode == 3 or tilemode == 5):
+		event_node.rotation_degrees.y = -90
+	_node_events.add_child(event_node)
+	return inter_node
+	pass
+	
+func tilecoord2worldposition(position:Vector2i)->Vector3:
+	return Vector3(position.x, 0, position.y) * tile_size
+	
+func get_spawn_direction()->int:
+	var tilemode:int= dict_map_data["g"][dict_map_data["p"]["s"]][1]
+	if(tilemode == 3 or tilemode == 5):
+		return CARDINALS.E
+	return CARDINALS.N
+
 func _mesh_add_arraymesh(data:Array, mesh:Array)->void:
 	var idx_offset:int = data[0]
 	var pos_offset:Vector3 = data[1]

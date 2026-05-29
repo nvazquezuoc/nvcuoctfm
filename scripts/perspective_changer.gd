@@ -1,5 +1,5 @@
 @tool
-extends Node3D
+extends interactable_base
 
 enum CARDINALS {
 	NONE=-1,
